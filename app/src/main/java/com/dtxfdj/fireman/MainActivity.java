@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.GeolocationPermissions;
 import android.webkit.SslErrorHandler;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -25,26 +26,23 @@ import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity {
 
-    Handler mHandler = new Handler();
+    //    private final static String DEFAULT_URL = "http://dh.123.sogou.com";
+//    private final static String DEFAULT_URL = "http://10.129.192.204";
+    private final static String DEFAULT_URL = "http://m.youtube.com";
+    private final static int SHOW_START_PAGE_MS = 3000;
 
+    Handler mHandler = new Handler();
     WebView mWebView;
 
+    // implement fullscreen function
     private View mCustomView;
     private FrameLayout mFullscreenContainer;
     private WebChromeClient.CustomViewCallback mCustomViewCallback;
 
-
-//    private final static String DEFAULT_URL = "http://dh.123.sogou.com";
-//    private final static String DEFAULT_URL = "http://10.129.192.204";
-    private final static String DEFAULT_URL = "http://m.youtube.com";
-
     Runnable mDismissStartImg = new Runnable() {
         @Override
         public void run() {
-            ImageView imgView = findViewById(R.id.start_img);
-            if (imgView != null) {
-                imgView.setVisibility(View.GONE);
-            }
+            dismissStartPage();
         }
     };
 
@@ -56,20 +54,47 @@ public class MainActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
 
-//        ImageView imgView = findViewById(R.id.start_img);
-//        imgView.setImageDrawable(getApplicationContext().getDrawable(R.drawable.start_img));
-
-
         initWebView();
-        mHandler.postDelayed(mDismissStartImg, 3000);
+        mHandler.postDelayed(mDismissStartImg, SHOW_START_PAGE_MS);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mWebView.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mWebView.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mWebView.destroy();
+        mHandler.removeCallbacks(mDismissStartImg);
     }
 
     private void initWebView() {
         mWebView = findViewById(R.id.content_webview);
+        mWebView.requestFocusFromTouch();
         mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.getSettings().setAppCacheEnabled(true);
-        mWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+        mWebView.getSettings().setSupportZoom(false);
+        mWebView.getSettings().setBuiltInZoomControls(false);
+        mWebView.getSettings().setDisplayZoomControls(false);
+        mWebView.getSettings().setAllowFileAccess(true);
+        mWebView.getSettings().setUseWideViewPort(true);
+        mWebView.getSettings().setLoadWithOverviewMode(true);
+        mWebView.getSettings().setSupportMultipleWindows(false);
+        mWebView.getSettings().setAllowFileAccess(true);
+        mWebView.getSettings().setDatabaseEnabled(true);
         mWebView.getSettings().setDomStorageEnabled(true);
+        mWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+        mWebView.getSettings().setAppCacheEnabled(true);
+        mWebView.getSettings().setAppCachePath(
+                mWebView.getContext().getCacheDir().getAbsolutePath());
 
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
@@ -87,22 +112,31 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mWebView.setWebChromeClient(new WebChromeClient() {
+            @Override
             public void onGeolocationPermissionsShowPrompt(String origin,
                                                            GeolocationPermissions.Callback callback) {
                 callback.invoke(origin, true, true);
             }
 
+            @Override
             public void onShowCustomView(View view, WebChromeClient.CustomViewCallback callback) {
                 onShowDefaultCustomView(view, callback);
             }
 
-
+            @Override
             public void onHideCustomView() {
                 onHideDefaulCustomView();
+            }
+
+            @Override
+            public boolean onShowFileChooser(WebView webView, ValueCallback filePathCallback,
+                WebChromeClient.FileChooserParams fileChooserParams) {
+                return false;
             }
         });
         mWebView.loadUrl(DEFAULT_URL);
     }
+
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK
@@ -185,5 +219,13 @@ public class MainActivity extends AppCompatActivity {
             systemUiVisibility &= ~flags;
         }
         decor.setSystemUiVisibility(systemUiVisibility);
+    }
+
+    private void dismissStartPage() {
+        ImageView imgView = findViewById(R.id.start_img);
+        if (imgView != null) {
+            android.util.Log.e("bdg", "bdg-dismissStartPage");
+            imgView.setVisibility(View.GONE);
+        }
     }
 }
