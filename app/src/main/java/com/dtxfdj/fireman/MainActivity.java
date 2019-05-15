@@ -34,9 +34,9 @@ import java.net.URISyntaxException;
 
 public class MainActivity extends AppCompatActivity {
 
-    //    private final static String DEFAULT_URL = "http://dh.123.sogou.com";
+    private final static String DEFAULT_URL = "http://dh.123.sogou.com";
 //    private final static String DEFAULT_URL = "http://10.129.192.204";
-    private final static String DEFAULT_URL = "http://m.youtube.com";
+//    private final static String DEFAULT_URL = "http://m.youtube.com";
     private final static int SHOW_START_PAGE_MS = 3000;
 
     Handler mHandler = new Handler();
@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
     private View mCustomView;
     private FrameLayout mFullscreenContainer;
     private WebChromeClient.CustomViewCallback mCustomViewCallback;
-
 
     private EditText mEditText;
 
@@ -96,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         mWebView.getSettings().setBuiltInZoomControls(false);
         mWebView.getSettings().setDisplayZoomControls(false);
         mWebView.getSettings().setAllowFileAccess(true);
-//        mWebView.getSettings().setUseWideViewPort(true);
+        mWebView.getSettings().setUseWideViewPort(true);
         mWebView.getSettings().setLoadWithOverviewMode(true);
         mWebView.getSettings().setSupportMultipleWindows(false);
         mWebView.getSettings().setAllowFileAccess(true);
@@ -106,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
         mWebView.getSettings().setAppCacheEnabled(true);
         mWebView.getSettings().setAppCachePath(
                 mWebView.getContext().getCacheDir().getAbsolutePath());
-
 
         mEditText = findViewById(R.id.url_edit);
         Button btn = findViewById(R.id.url_go);
@@ -296,7 +294,6 @@ public class MainActivity extends AppCompatActivity {
     private void dismissStartPage() {
         ImageView imgView = findViewById(R.id.start_img);
         if (imgView != null) {
-            android.util.Log.e("bdg", "bdg-dismissStartPage");
             imgView.setVisibility(View.GONE);
         }
     }
