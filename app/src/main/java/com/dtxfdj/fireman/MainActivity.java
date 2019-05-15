@@ -13,6 +13,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.GeolocationPermissions;
 import android.webkit.SslErrorHandler;
@@ -21,8 +23,14 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
     private View mCustomView;
     private FrameLayout mFullscreenContainer;
     private WebChromeClient.CustomViewCallback mCustomViewCallback;
+
+
+    private EditText mEditText;
 
     Runnable mDismissStartImg = new Runnable() {
         @Override
@@ -85,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         mWebView.getSettings().setBuiltInZoomControls(false);
         mWebView.getSettings().setDisplayZoomControls(false);
         mWebView.getSettings().setAllowFileAccess(true);
-        mWebView.getSettings().setUseWideViewPort(true);
+//        mWebView.getSettings().setUseWideViewPort(true);
         mWebView.getSettings().setLoadWithOverviewMode(true);
         mWebView.getSettings().setSupportMultipleWindows(false);
         mWebView.getSettings().setAllowFileAccess(true);
@@ -95,6 +106,37 @@ public class MainActivity extends AppCompatActivity {
         mWebView.getSettings().setAppCacheEnabled(true);
         mWebView.getSettings().setAppCachePath(
                 mWebView.getContext().getCacheDir().getAbsolutePath());
+
+
+        mEditText = findViewById(R.id.url_edit);
+        Button btn = findViewById(R.id.url_go);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startLoadUrl();
+            }
+        });
+        mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((actionId != EditorInfo.IME_ACTION_GO) && (event == null ||
+                        event.getKeyCode() != KeyEvent.KEYCODE_ENTER ||
+                        event.getAction() != KeyEvent.ACTION_DOWN)) {
+                    return false;
+                }
+                startLoadUrl();
+                return true;
+            }
+        });
+
+        mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                setKeyboardVisibilityForUrl(hasFocus);
+                if (!hasFocus)
+                    mEditText.setText(mWebView.getUrl());
+            }
+        });
 
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
@@ -136,6 +178,36 @@ public class MainActivity extends AppCompatActivity {
         });
         mWebView.loadUrl(DEFAULT_URL);
     }
+
+    private void startLoadUrl() {
+        String url = mEditText.getText().toString();
+        try {
+            URI uri = new URI(url);
+            if (uri.getScheme() == null) {
+                url = "http://" + uri.toString();
+            } else {
+                url = uri.toString();
+            }
+        } catch (URISyntaxException e) {
+            // Ignore syntax errors.
+        }
+        mWebView.loadUrl(url);
+        mEditText.clearFocus();
+        setKeyboardVisibilityForUrl(false);
+        mWebView.requestFocus();
+
+    }
+
+    private void setKeyboardVisibilityForUrl(boolean visible) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        if (visible) {
+            imm.showSoftInput(mEditText, InputMethodManager.SHOW_IMPLICIT);
+        } else {
+            imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
+        }
+    }
+
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
