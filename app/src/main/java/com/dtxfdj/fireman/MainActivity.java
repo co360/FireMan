@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -142,7 +143,9 @@ public class MainActivity extends AppCompatActivity {
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
+                if (isValidUrl(url)) {
+                    view.loadUrl(url);
+                }
                 // avoid open url with android default browser
                 return true;
             }
@@ -197,6 +200,12 @@ public class MainActivity extends AppCompatActivity {
         setKeyboardVisibilityForUrl(false);
         mWebView.requestFocus();
 
+    }
+
+    private boolean isValidUrl(String url) {
+        return !TextUtils.isEmpty(url) && (url.startsWith("http://")
+                || url.startsWith("https://")
+                || url.startsWith("about:"));
     }
 
     private void setKeyboardVisibilityForUrl(boolean visible) {
