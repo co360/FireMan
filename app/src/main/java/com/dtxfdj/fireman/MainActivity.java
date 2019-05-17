@@ -37,10 +37,10 @@ import java.net.URISyntaxException;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final static String DEFAULT_URL = "http://dh.123.sogou.com";
+//    private final static String DEFAULT_URL = "http://dh.123.sogou.com";
 //    private final static String DEFAULT_URL = "http://10.129.192.204";
 //    private final static String DEFAULT_URL = "http://m.youtube.com";
-//    private final static String DEFAULT_URL = "http://39.106.90.54/#/";
+    private final static String DEFAULT_URL = "http://39.106.90.54/#/";
     private final static int SHOW_START_PAGE_MS = 3000;
 
     Handler mHandler = new Handler();
@@ -304,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void dismissStartPage() {
-        ImageView imgView = findViewById(R.id.start_img);
+        SlideShowView imgView = findViewById(R.id.start_img);
         if (imgView != null) {
             imgView.setVisibility(View.GONE);
         }

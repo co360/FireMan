@@ -28,7 +28,7 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
             <com.tencent.smtt.sdk.WebView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -36,10 +36,9 @@
             </com.tencent.smtt.sdk.WebView>
         </FrameLayout>
     </LinearLayout>
-    <ImageView
+    <com.dtxfdj.fireman.SlideShowView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/start_img"
-        android:src="@drawable/start_img"
         android:scaleType="fitXY"/>
 </FrameLayout>
