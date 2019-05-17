@@ -15,14 +15,16 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.CookieSyncManager;
-import android.webkit.GeolocationPermissions;
-import android.webkit.SslErrorHandler;
-import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import com.tencent.smtt.export.external.interfaces.GeolocationPermissionsCallback;
+import com.tencent.smtt.export.external.interfaces.SslErrorHandler;
+import com.tencent.smtt.sdk.ValueCallback;
+import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient.CustomViewCallback;
+
+import com.tencent.smtt.sdk.WebChromeClient;
+import com.tencent.smtt.sdk.WebSettings;
+import com.tencent.smtt.sdk.WebView;
+import com.tencent.smtt.sdk.WebViewClient;
+
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private final static String DEFAULT_URL = "http://dh.123.sogou.com";
 //    private final static String DEFAULT_URL = "http://10.129.192.204";
 //    private final static String DEFAULT_URL = "http://m.youtube.com";
+//    private final static String DEFAULT_URL = "http://39.106.90.54/#/";
     private final static int SHOW_START_PAGE_MS = 3000;
 
     Handler mHandler = new Handler();
@@ -45,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     // implement fullscreen function
     private View mCustomView;
     private FrameLayout mFullscreenContainer;
-    private WebChromeClient.CustomViewCallback mCustomViewCallback;
+    private CustomViewCallback mCustomViewCallback;
 
     private EditText mEditText;
 
@@ -144,22 +147,22 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
 
-            @Override
-            public void onReceivedSslError(final WebView view,
-                                           final SslErrorHandler handler, final SslError error) {
-                handler.proceed();
-            }
+//            @Override
+//            public void onReceivedSslError(final WebView view,
+//                                           final SslErrorHandler handler, final SslError error) {
+//                handler.proceed();
+//            }
         });
 
         mWebView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onGeolocationPermissionsShowPrompt(String origin,
-                                                           GeolocationPermissions.Callback callback) {
+                                                           GeolocationPermissionsCallback callback) {
                 callback.invoke(origin, true, true);
             }
 
             @Override
-            public void onShowCustomView(View view, WebChromeClient.CustomViewCallback callback) {
+            public void onShowCustomView(View view, CustomViewCallback callback) {
                 onShowDefaultCustomView(view, callback);
             }
 
@@ -232,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onShowDefaultCustomView(
-            View view, WebChromeClient.CustomViewCallback callback) {
+            View view, CustomViewCallback callback) {
         if (mCustomView != null) {
             return;
         }
