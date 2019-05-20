@@ -8,11 +8,13 @@ import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Handler;
+import android.support.v4.view.AsyncLayoutInflater;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,10 +35,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.zip.Inflater;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,7 +48,12 @@ public class MainActivity extends AppCompatActivity {
 //    private final static String DEFAULT_URL = "http://10.129.192.204";
 //    private final static String DEFAULT_URL = "http://m.youtube.com";
 //    private final static String DEFAULT_URL = "http://39.106.90.54/#/";
+    // user: 15010929796 ps: 122716
     private final static int SHOW_START_PAGE_MS = 3000;
+
+    private final static boolean mEnableUrlEditor = true;
+
+    private final static boolean mEnableStartPage = true;
 
     Handler mHandler = new Handler();
     WebView mWebView;
@@ -55,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
     private CustomViewCallback mCustomViewCallback;
 
     private EditText mEditText;
+
+    private LayoutInflater mInflater;
 
     Runnable mDismissStartImg = new Runnable() {
         @Override
@@ -72,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
         actionBar.hide();
 
         initWebView();
+        initUrlEditor();
+        initStartPage();
         mHandler.postDelayed(mDismissStartImg, SHOW_START_PAGE_MS);
     }
 
@@ -112,36 +125,6 @@ public class MainActivity extends AppCompatActivity {
         mWebView.getSettings().setAppCacheEnabled(true);
         mWebView.getSettings().setAppCachePath(
                 mWebView.getContext().getCacheDir().getAbsolutePath());
-
-        mEditText = findViewById(R.id.url_edit);
-        Button btn = findViewById(R.id.url_go);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startLoadUrl();
-            }
-        });
-        mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if ((actionId != EditorInfo.IME_ACTION_GO) && (event == null ||
-                        event.getKeyCode() != KeyEvent.KEYCODE_ENTER ||
-                        event.getAction() != KeyEvent.ACTION_DOWN)) {
-                    return false;
-                }
-                startLoadUrl();
-                return true;
-            }
-        });
-
-        mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                setKeyboardVisibilityForUrl(hasFocus);
-                if (!hasFocus)
-                    mEditText.setText(mWebView.getUrl());
-            }
-        });
 
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
@@ -186,7 +169,58 @@ public class MainActivity extends AppCompatActivity {
         mWebView.loadUrl(DEFAULT_URL);
     }
 
+    private void initUrlEditor() {
+        if (!mEnableUrlEditor) {
+            return;
+        }
+        View editorContainer = findViewById(R.id.editor_container);
+        editorContainer.setVisibility(View.VISIBLE);
+
+        mEditText = findViewById(R.id.url_edit);
+        Button btn = findViewById(R.id.url_go);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startLoadUrl();
+            }
+        });
+        mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((actionId != EditorInfo.IME_ACTION_GO) && (event == null ||
+                        event.getKeyCode() != KeyEvent.KEYCODE_ENTER ||
+                        event.getAction() != KeyEvent.ACTION_DOWN)) {
+                    return false;
+                }
+                startLoadUrl();
+                return true;
+            }
+        });
+
+        mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                setKeyboardVisibilityForUrl(hasFocus);
+                if (!hasFocus)
+                    mEditText.setText(mWebView.getUrl());
+            }
+        });
+    }
+
+    private void initStartPage() {
+        if (!mEnableStartPage) {
+            return;
+        }
+        SlideShowView imgView = findViewById(R.id.start_img);
+        if (imgView != null) {
+            imgView.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void startLoadUrl() {
+        if (!mEnableUrlEditor) {
+            return;
+        }
         String url = mEditText.getText().toString();
         try {
             URI uri = new URI(url);
@@ -199,7 +233,9 @@ public class MainActivity extends AppCompatActivity {
             // Ignore syntax errors.
         }
         mWebView.loadUrl(url);
-        mEditText.clearFocus();
+        if (mEditText != null) {
+            mEditText.clearFocus();
+        }
         setKeyboardVisibilityForUrl(false);
         mWebView.requestFocus();
 
@@ -212,6 +248,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setKeyboardVisibilityForUrl(boolean visible) {
+        if (!mEnableUrlEditor) {
+            return;
+        }
         InputMethodManager imm = (InputMethodManager) getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         if (visible) {
