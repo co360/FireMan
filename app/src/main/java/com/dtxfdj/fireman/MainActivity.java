@@ -21,6 +21,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+
+import com.dtxfdj.fireman.utils.PreferencesUtils;
 import com.tencent.smtt.export.external.interfaces.GeolocationPermissionsCallback;
 import com.tencent.smtt.export.external.interfaces.SslErrorHandler;
 import com.tencent.smtt.sdk.ValueCallback;
@@ -49,13 +51,11 @@ public class MainActivity extends AppCompatActivity {
 //    private final static String DEFAULT_URL = "http://m.youtube.com";
 //    private final static String DEFAULT_URL = "http://39.106.90.54/#/";
     // user: 15010929796 ps: 122716
-    private final static int SHOW_START_PAGE_MS = 3000;
+
+    private final String START_PAGE_SHOW_PREFENRENCE_KEY = "enable_start_page";
 
     private final static boolean mEnableUrlEditor = true;
 
-    private final static boolean mEnableStartPage = true;
-
-    Handler mHandler = new Handler();
     WebView mWebView;
 
     // implement fullscreen function
@@ -64,15 +64,6 @@ public class MainActivity extends AppCompatActivity {
     private CustomViewCallback mCustomViewCallback;
 
     private EditText mEditText;
-
-    private LayoutInflater mInflater;
-
-    Runnable mDismissStartImg = new Runnable() {
-        @Override
-        public void run() {
-            dismissStartPage();
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,8 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
         initWebView();
         initUrlEditor();
-        initStartPage();
-        mHandler.postDelayed(mDismissStartImg, SHOW_START_PAGE_MS);
+        showOnNeccesary(getApplicationContext());
     }
 
     @Override
@@ -104,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         mWebView.destroy();
-        mHandler.removeCallbacks(mDismissStartImg);
     }
 
     private void initWebView() {
@@ -207,11 +196,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void initStartPage() {
-        if (!mEnableStartPage) {
+    public void showOnNeccesary(Context context) {
+        if (!PreferencesUtils.getInstance().loadBoolean(
+                context, START_PAGE_SHOW_PREFENRENCE_KEY, true)) {
             return;
         }
-        SlideShowView imgView = findViewById(R.id.start_img);
+        PreferencesUtils.getInstance().saveBoolean(
+                context, START_PAGE_SHOW_PREFENRENCE_KEY, false);
+        com.dtxfdj.fireman.SlideShowView imgView = findViewById(R.id.start_img);
         if (imgView != null) {
             imgView.setVisibility(View.VISIBLE);
         }
@@ -343,12 +335,5 @@ public class MainActivity extends AppCompatActivity {
             systemUiVisibility &= ~flags;
         }
         decor.setSystemUiVisibility(systemUiVisibility);
-    }
-
-    private void dismissStartPage() {
-        SlideShowView imgView = findViewById(R.id.start_img);
-        if (imgView != null) {
-            // imgView.setVisibility(View.GONE);
-        }
     }
 }
