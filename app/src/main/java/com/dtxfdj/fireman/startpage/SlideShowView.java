@@ -72,8 +72,12 @@ public class SlideShowView extends FrameLayout {
     public SlideShowView(Context context,
             AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+    }
+
+    public void show() {
         initData();
-        initUI(context);
+        initUI(getContext());
+        setVisibility(VISIBLE);
         if (isAutoPlay) {
             startPlay();
         }

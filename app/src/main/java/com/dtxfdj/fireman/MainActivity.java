@@ -4,17 +4,12 @@
 package com.dtxfdj.fireman;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.net.http.SslError;
 import android.os.Build;
-import android.os.Handler;
-import android.support.v4.view.AsyncLayoutInflater;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +19,6 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.dtxfdj.fireman.utils.PreferencesUtils;
 import com.tencent.smtt.export.external.interfaces.GeolocationPermissionsCallback;
-import com.tencent.smtt.export.external.interfaces.SslErrorHandler;
 import com.tencent.smtt.sdk.ValueCallback;
 import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient.CustomViewCallback;
 
@@ -36,13 +30,10 @@ import com.tencent.smtt.sdk.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.zip.Inflater;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final String START_PAGE_SHOW_PREFENRENCE_KEY = "enable_start_page";
 
-    private final static boolean mEnableUrlEditor = true;
+    private final static boolean mEnableUrlEditor = false;
 
     WebView mWebView;
 
@@ -75,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
         initWebView();
         initUrlEditor();
-        showOnNeccesary(getApplicationContext());
+        showStartPageOnNeccesary();
     }
 
     @Override
@@ -196,7 +187,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void showOnNeccesary(Context context) {
+    public void showStartPageOnNeccesary() {
+        Context context = getApplicationContext();
         if (!PreferencesUtils.getInstance().loadBoolean(
                 context, START_PAGE_SHOW_PREFENRENCE_KEY, true)) {
             return;
@@ -205,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
                 context, START_PAGE_SHOW_PREFENRENCE_KEY, false);
         com.dtxfdj.fireman.SlideShowView imgView = findViewById(R.id.start_img);
         if (imgView != null) {
-            imgView.setVisibility(View.VISIBLE);
+            imgView.show();
         }
     }
 
