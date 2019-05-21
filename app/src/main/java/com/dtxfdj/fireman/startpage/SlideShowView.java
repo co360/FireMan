@@ -10,7 +10,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
@@ -109,9 +113,14 @@ public class SlideShowView extends FrameLayout {
     private void initUI(Context context) {
         LayoutInflater.from(context).inflate(
                 R.layout.layout_slideshow, this, true);
+        // subsample picture under android 5.0, because of out of memory
+        int factor = Build.VERSION.SDK_INT < 21 ? 4 : 1;
         for (int imageID : mImagesResIds) {
             ImageView view =  new ImageView(context);
-            view.setImageResource(imageID);
+            view.setImageBitmap(decodeSampledBitmapFromResource(
+                    getResources(), imageID,
+                    context.getResources().getDisplayMetrics().widthPixels / factor,
+                    context.getResources().getDisplayMetrics().heightPixels / factor));
             view.setScaleType(ScaleType.FIT_XY);
             mImageViewsList.add(view);
         }
@@ -188,8 +197,8 @@ public class SlideShowView extends FrameLayout {
                     }
                     // 当前为第一张，此时从左向右滑，则切换到最后一张
                     else if (mViewPager.getCurrentItem() == 0 && !isAutoPlay) {
-                        destory();
                         // mViewPager.setCurrentItem(mViewPager.getAdapter().getCount() - 1);
+                        destory();
                     }
                     break;
             }
@@ -232,6 +241,44 @@ public class SlideShowView extends FrameLayout {
                 drawable.setCallback(null);
             }
         }
+    }
+
+    private static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
+                                                         int reqWidth, int reqHeight) {
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(res, resId, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeResource(res, resId, options);
+    }
+
+    private static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
     }
 
     private void destory() {
