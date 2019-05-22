@@ -1,7 +1,7 @@
 // Copyright 2019 The dtxfdj. All rights reserved.
 // Author: baidaogui.
 
-package com.dtxfdj.fireman;
+package com.dtxfdj.fireman.startpage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +29,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
+import com.dtxfdj.fireman.R;
+import com.dtxfdj.fireman.utils.CommonUtils;
 
 /**
- * ViewPager实现的轮播图广告自定义视图
+ * SlideShowView 实现的轮播图广告自定义视图
  * 既支持自动轮播页面也支持手势滑动切换页面
  * @author baidaogui
  *
@@ -117,7 +119,7 @@ public class SlideShowView extends FrameLayout {
         int factor = Build.VERSION.SDK_INT < 21 ? 4 : 1;
         for (int imageID : mImagesResIds) {
             ImageView view =  new ImageView(context);
-            view.setImageBitmap(decodeSampledBitmapFromResource(
+            view.setImageBitmap(CommonUtils.decodeSampledBitmapFromResource(
                     getResources(), imageID,
                     context.getResources().getDisplayMetrics().widthPixels / factor,
                     context.getResources().getDisplayMetrics().heightPixels / factor));
@@ -160,6 +162,7 @@ public class SlideShowView extends FrameLayout {
         public boolean isViewFromObject(View arg0, Object arg1) {
             return arg0 == arg1;
         }
+
         @Override
         public void restoreState(Parcelable arg0, ClassLoader arg1) {
         }
@@ -227,7 +230,7 @@ public class SlideShowView extends FrameLayout {
         @Override
         public void run() {
             synchronized (mViewPager) {
-                mCurrentItem = (mCurrentItem+1)%mImageViewsList.size();
+                mCurrentItem = (mCurrentItem + 1) % mImageViewsList.size();
                 mHandler.obtainMessage().sendToTarget();
             }
         }
@@ -241,44 +244,6 @@ public class SlideShowView extends FrameLayout {
                 drawable.setCallback(null);
             }
         }
-    }
-
-    private static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
-                                                         int reqWidth, int reqHeight) {
-        // First decode with inJustDecodeBounds=true to check dimensions
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(res, resId, options);
-
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeResource(res, resId, options);
-    }
-
-    private static int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) >= reqHeight
-                    && (halfWidth / inSampleSize) >= reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-
-        return inSampleSize;
     }
 
     private void destory() {

@@ -39,7 +39,7 @@
             </com.tencent.smtt.sdk.WebView>
         </FrameLayout>
     </LinearLayout>
-    <com.dtxfdj.fireman.SlideShowView
+    <com.dtxfdj.fireman.startpage.SlideShowView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/start_img"

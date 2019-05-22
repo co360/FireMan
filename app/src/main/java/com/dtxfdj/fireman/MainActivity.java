@@ -5,9 +5,9 @@ package com.dtxfdj.fireman;
 
 import android.content.Context;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -16,22 +16,19 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-
-import com.dtxfdj.fireman.utils.PreferencesUtils;
-import com.tencent.smtt.export.external.interfaces.GeolocationPermissionsCallback;
-import com.tencent.smtt.sdk.ValueCallback;
-import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient.CustomViewCallback;
-
-import com.tencent.smtt.sdk.WebChromeClient;
-import com.tencent.smtt.sdk.WebSettings;
-import com.tencent.smtt.sdk.WebView;
-import com.tencent.smtt.sdk.WebViewClient;
-
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-
+import com.dtxfdj.fireman.startpage.SlideShowView;
+import com.dtxfdj.fireman.utils.PreferencesUtils;
+import com.tencent.smtt.export.external.interfaces.GeolocationPermissionsCallback;
+import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient.CustomViewCallback;
+import com.tencent.smtt.sdk.ValueCallback;
+import com.tencent.smtt.sdk.WebChromeClient;
+import com.tencent.smtt.sdk.WebSettings;
+import com.tencent.smtt.sdk.WebView;
+import com.tencent.smtt.sdk.WebViewClient;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -112,7 +109,8 @@ public class MainActivity extends AppCompatActivity {
 
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            public boolean shouldOverrideUrlLoading(
+                    WebView view, String url) {
                 if (isValidUrl(url)) {
                     view.loadUrl(url);
                 }
@@ -122,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
 //            @Override
 //            public void onReceivedSslError(final WebView view,
-//                                           final SslErrorHandler handler, final SslError error) {
+//                                           final SslErrorHandler handler,//                                           final SslError error) {
 //                handler.proceed();
 //            }
         });
@@ -130,12 +128,13 @@ public class MainActivity extends AppCompatActivity {
         mWebView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onGeolocationPermissionsShowPrompt(String origin,
-                                                           GeolocationPermissionsCallback callback) {
+                    GeolocationPermissionsCallback callback) {
                 callback.invoke(origin, true, true);
             }
 
             @Override
-            public void onShowCustomView(View view, CustomViewCallback callback) {
+            public void onShowCustomView(View view,
+                    CustomViewCallback callback) {
                 onShowDefaultCustomView(view, callback);
             }
 
@@ -145,7 +144,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public boolean onShowFileChooser(WebView webView, ValueCallback filePathCallback,
+            public boolean onShowFileChooser(
+                    WebView webView, ValueCallback filePathCallback,
                 WebChromeClient.FileChooserParams fileChooserParams) {
                 return false;
             }
@@ -168,12 +168,15 @@ public class MainActivity extends AppCompatActivity {
                 startLoadUrl();
             }
         });
-        mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mEditText.setOnEditorActionListener(
+                new TextView.OnEditorActionListener() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if ((actionId != EditorInfo.IME_ACTION_GO) && (event == null ||
-                        event.getKeyCode() != KeyEvent.KEYCODE_ENTER ||
-                        event.getAction() != KeyEvent.ACTION_DOWN)) {
+            public boolean onEditorAction(
+                    TextView v, int actionId, KeyEvent event) {
+                if ((actionId != EditorInfo.IME_ACTION_GO)
+                        && (event == null
+                            || event.getKeyCode() != KeyEvent.KEYCODE_ENTER
+                            || event.getAction() != KeyEvent.ACTION_DOWN)) {
                     return false;
                 }
                 startLoadUrl();
@@ -199,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
         }
         PreferencesUtils.getInstance().saveBoolean(
                 context, START_PAGE_SHOW_PREFENRENCE_KEY, false);
-        com.dtxfdj.fireman.SlideShowView imgView = findViewById(R.id.start_img);
+        SlideShowView imgView = findViewById(R.id.start_img);
         if (imgView != null) {
             imgView.show();
         }
@@ -313,7 +316,8 @@ public class MainActivity extends AppCompatActivity {
                     WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
         } else {
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            getWindow().clearFlags(
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             return;
