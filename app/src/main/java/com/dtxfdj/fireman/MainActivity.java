@@ -47,7 +47,9 @@ public class MainActivity extends AppCompatActivity {
 
     private final static boolean mEnableUrlEditor = false;
 
-    WebView mWebView;
+    public static boolean isForeground = false;
+
+    private WebView mWebView;
 
     // implement fullscreen function
     private View mCustomView;
@@ -71,12 +73,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onPause() {
+        isForeground = false;
         super.onPause();
         mWebView.onPause();
     }
 
     @Override
     public void onResume() {
+        isForeground = true;
         super.onResume();
         mWebView.onResume();
     }

@@ -8,7 +8,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name=".MainApplication">
         <activity android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize"
             android:windowSoftInputMode="stateHidden|adjustResize">
@@ -17,6 +18,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 极光推送 start -->
+        <service android:name="com.dtxfdj.fireman.PushService"
+            android:process=":pushcore">
+            <intent-filter>
+                <action android:name="cn.jiguang.user.service.action" />
+            </intent-filter>
+        </service>
+        <receiver android:name="com.dtxfdj.fireman.PushMessageReceiver">
+            <intent-filter>
+                <action android:name="cn.jpush.android.intent.RECEIVE_MESSAGE" />
+                <category android:name="com.dtxfdj.fireman"></category>
+            </intent-filter>
+        </receiver>
+        <!-- 极光推送 end -->
     </application>
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
