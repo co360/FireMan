@@ -21,13 +21,13 @@
         </activity>
 
         <!-- 极光推送 start -->
-        <service android:name="com.dtxfdj.fireman.PushService"
+        <service android:name="com.dtxfdj.fireman.jpush.PushService"
             android:process=":pushcore">
             <intent-filter>
                 <action android:name="cn.jiguang.user.service.action" />
             </intent-filter>
         </service>
-        <receiver android:name="com.dtxfdj.fireman.PushMessageReceiver">
+        <receiver android:name="com.dtxfdj.fireman.jpush.PushMessageReceiver">
             <intent-filter>
                 <action android:name="cn.jpush.android.intent.RECEIVE_MESSAGE" />
                 <category android:name="com.dtxfdj.fireman"></category>

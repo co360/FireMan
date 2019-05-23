@@ -1,4 +1,4 @@
-package com.dtxfdj.fireman;
+package com.dtxfdj.fireman.jpush;
 
 import cn.jpush.android.service.JCommonService;
 
