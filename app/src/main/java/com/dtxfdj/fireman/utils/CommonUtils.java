@@ -3,9 +3,20 @@
 
 package com.dtxfdj.fireman.utils;
 
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.text.TextUtils;
+import android.widget.Toast;
+import com.dtxfdj.fireman.R;
+import java.util.List;
 
 public class CommonUtils {
 
@@ -48,4 +59,81 @@ public class CommonUtils {
         return inSampleSize;
     }
 
+    public static boolean isValidUrl(String url) {
+        return !TextUtils.isEmpty(url)
+                && (url.startsWith("http://")
+                || url.startsWith("https://")
+                || url.startsWith("about:"));
+    }
+
+    public static boolean handleNoneBrowserUrl(
+            Activity activity, String url) {
+        if (url.startsWith("weixin://wap/pay?")) {
+            if (isWxInstall(activity)) {
+                return startActivity(activity, url);
+            } else {
+                Toast.makeText(activity,
+                        R.string.not_install_weixin,
+                        Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        if (url.startsWith("alipays://platformapi/startApp?")) {
+            if (isAliPayInstalled(activity)) {
+                return startActivity(activity, url);
+            } else {
+                Toast.makeText(activity,
+                        R.string.not_install_alipay,
+                        Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isWxInstall(Context context) {
+        try {
+            final PackageManager packageManager = context.getPackageManager();
+            List pinfo = packageManager.getInstalledPackages(0);
+            if (pinfo == null) {
+                return false;
+            }
+            for (int i =0; i < pinfo.size(); i++) {
+                String pn = ((PackageInfo) pinfo.get(i)).packageName;
+                if (pn.equals("com.tencent.mm")) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private static boolean isAliPayInstalled(Context context) {
+        ComponentName componentName = null;
+        try {
+            Uri uri = Uri.parse("alipays://platformapi/startApp");
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            componentName =
+                    intent.resolveActivity(context.getPackageManager());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return componentName != null;
+    }
+
+    private static boolean startActivity(Context context, String url) {
+        try {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+            context.startActivity(intent);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

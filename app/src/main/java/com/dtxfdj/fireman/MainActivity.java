@@ -8,7 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,10 +19,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
 import com.dtxfdj.fireman.startpage.SlideShowView;
+import com.dtxfdj.fireman.utils.CommonUtils;
 import com.dtxfdj.fireman.utils.PreferencesUtils;
 import com.tencent.smtt.export.external.interfaces.GeolocationPermissionsCallback;
 import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient.CustomViewCallback;
+import com.tencent.smtt.export.external.interfaces.WebResourceRequest;
 import com.tencent.smtt.sdk.ValueCallback;
 import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebSettings;
@@ -31,18 +33,20 @@ import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
     private final static String DEFAULT_URL = "http://dh.123.sogou.com";
 //    private final static String DEFAULT_URL = "http://10.129.192.204";
-//    private final static String DEFAULT_URL = "http://m.youtube.com";
+//    private final static String DEFAULT_URL = "https://wxpay.wxutil.com/mch/pay/h5.v2.php";
 //    private final static String DEFAULT_URL = "http://39.106.90.54/#/";
     // user: 15010929796 ps: 122716
 
     private final String START_PAGE_SHOW_PREFENRENCE_KEY = "enable_start_page";
 
-    private final static boolean mEnableUrlEditor = false;
+    private final static boolean mEnableUrlEditor = true;
 
     public static boolean isForeground = false;
 
@@ -108,11 +112,20 @@ public class MainActivity extends AppCompatActivity {
                 mWebView.getContext().getCacheDir().getAbsolutePath());
 
         mWebView.setWebViewClient(new WebViewClient() {
+
+            @Override
+            public boolean shouldOverrideUrlLoading(
+                    WebView view, WebResourceRequest request) {
+                return shouldOverrideUrlLoading(view, request.getUrl().toString());
+            }
+
             @Override
             public boolean shouldOverrideUrlLoading(
                     WebView view, String url) {
-                if (isValidUrl(url)) {
-                    view.loadUrl(url);
+                if (CommonUtils.isValidUrl(url)) {
+                    loadUrl(url);
+                } else if (!CommonUtils.handleNoneBrowserUrl(MainActivity.this, url)) {
+                    mWebView.goBack();
                 }
                 // avoid open url with android default browser
                 return true;
@@ -150,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        mWebView.loadUrl(DEFAULT_URL);
+        loadUrl(DEFAULT_URL);
     }
 
     private void initUrlEditor() {
@@ -195,17 +208,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showStartPageOnNeccesary() {
-        Context context = getApplicationContext();
         if (!PreferencesUtils.getInstance().loadBoolean(
-                context, START_PAGE_SHOW_PREFENRENCE_KEY, true)) {
+                this, START_PAGE_SHOW_PREFENRENCE_KEY, true)) {
             return;
         }
         PreferencesUtils.getInstance().saveBoolean(
-                context, START_PAGE_SHOW_PREFENRENCE_KEY, false);
+                this, START_PAGE_SHOW_PREFENRENCE_KEY, false);
         SlideShowView imgView = findViewById(R.id.start_img);
         if (imgView != null) {
             imgView.show();
         }
+    }
+
+    private void loadUrl(String url) {
+        Map extraHeaders = new HashMap();
+        if (url.startsWith("https://wx.tenpay.com")) {
+            extraHeaders.put("Referer", "https://wxpay.wxutil.com");
+        }
+        mWebView.loadUrl(url, extraHeaders);
     }
 
     private void startLoadUrl() {
@@ -223,19 +243,13 @@ public class MainActivity extends AppCompatActivity {
         } catch (URISyntaxException e) {
             // Ignore syntax errors.
         }
-        mWebView.loadUrl(url);
+        loadUrl(url);
         if (mEditText != null) {
             mEditText.clearFocus();
         }
         setKeyboardVisibilityForUrl(false);
         mWebView.requestFocus();
 
-    }
-
-    private boolean isValidUrl(String url) {
-        return !TextUtils.isEmpty(url) && (url.startsWith("http://")
-                || url.startsWith("https://")
-                || url.startsWith("about:"));
     }
 
     private void setKeyboardVisibilityForUrl(boolean visible) {
