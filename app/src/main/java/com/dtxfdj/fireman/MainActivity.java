@@ -25,6 +25,8 @@ import com.dtxfdj.fireman.utils.CommonUtils;
 import com.dtxfdj.fireman.utils.PreferencesUtils;
 import com.tencent.smtt.export.external.interfaces.GeolocationPermissionsCallback;
 import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient.CustomViewCallback;
+import com.tencent.smtt.export.external.interfaces.SslError;
+import com.tencent.smtt.export.external.interfaces.SslErrorHandler;
 import com.tencent.smtt.export.external.interfaces.WebResourceRequest;
 import com.tencent.smtt.sdk.ValueCallback;
 import com.tencent.smtt.sdk.WebChromeClient;
@@ -131,11 +133,12 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
 
-//            @Override
-//            public void onReceivedSslError(final WebView view,
-//                                           final SslErrorHandler handler,//                                           final SslError error) {
-//                handler.proceed();
-//            }
+            @Override
+            public void onReceivedSslError(final WebView view,
+                                           final SslErrorHandler handler,
+                                           final SslError error) {
+                handler.proceed();
+            }
         });
 
         mWebView.setWebChromeClient(new WebChromeClient() {
