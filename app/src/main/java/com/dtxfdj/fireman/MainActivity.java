@@ -127,7 +127,10 @@ public class MainActivity extends AppCompatActivity {
                 if (CommonUtils.isValidUrl(url)) {
                     loadUrl(url);
                 } else if (!CommonUtils.handleNoneBrowserUrl(MainActivity.this, url)) {
-                    mWebView.goBack();
+                    // goBack from weixin pay's redirect page
+                    if (mWebView.canGoBack()) {
+                        mWebView.goBack();
+                    }
                 }
                 // avoid open url with android default browser
                 return true;
