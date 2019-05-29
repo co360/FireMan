@@ -40,15 +40,15 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final static String DEFAULT_URL = "http://dh.123.sogou.com";
+//    private final static String DEFAULT_URL = "http://dh.123.sogou.com";
 //    private final static String DEFAULT_URL = "http://10.129.192.204";
 //    private final static String DEFAULT_URL = "https://wxpay.wxutil.com/mch/pay/h5.v2.php";
-//    private final static String DEFAULT_URL = "http://39.106.90.54/#/";
+    private final static String DEFAULT_URL = "http://39.106.90.54/#/";
     // user: 15010929796 ps: 122716
 
     private final String START_PAGE_SHOW_PREFENRENCE_KEY = "enable_start_page";
 
-    private final static boolean mEnableUrlEditor = true;
+    private final static boolean mEnableUrlEditor = false;
 
     public static boolean isForeground = false;
 

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">大同消防</string>
+    <string name="app_name">火焰蓝党建云</string>
     <string name="not_install_weixin">您未安装微信，请安装微信并支付。</string>
     <string name="not_install_alipay">您未安装支付宝，请安装支付宝并支付。</string>
 </resources>
