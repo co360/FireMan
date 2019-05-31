@@ -46,6 +46,20 @@ public class MainActivity extends AppCompatActivity {
     private final static String DEFAULT_URL = "http://39.106.90.54/#/";
     // user: 15010929796 ps: 122716
 
+    String[] mCantGoBackUrls = {
+            "partyWork/searchDues",
+            "partyWork/member",
+            "organization/organization",
+            "news/hot",
+            "news/stones",
+            "news/trends",
+            "knowledge/common",
+            "knowledge/history",
+            "knowledge/ebook",
+            "knowledge/video",
+            "mine/personalInfo",
+    };
+
     private final String START_PAGE_SHOW_PREFENRENCE_KEY = "enable_start_page";
 
     private final static boolean mEnableUrlEditor = false;
@@ -271,12 +285,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private boolean canGoBack() {
+        for (int idx = 0; idx < mCantGoBackUrls.length; idx++) {
+            String url = mCantGoBackUrls[idx];
+            if (mWebView.getUrl().endsWith(url)) {
+                return false;
+            }
+        }
+        return mWebView.canGoBack();
+    }
+
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK
-                && mWebView != null
-                && mWebView.canGoBack()
+                && canGoBack()
                 && mCustomView == null) {
             mWebView.goBack();
             return true;
