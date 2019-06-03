@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.dtxfdj.fireman.jsinterface.JSInterface;
 import com.dtxfdj.fireman.startpage.SlideShowView;
 import com.dtxfdj.fireman.utils.CommonUtils;
 import com.dtxfdj.fireman.utils.PreferencesUtils;
@@ -41,7 +42,8 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
 //    private final static String DEFAULT_URL = "http://dh.123.sogou.com";
-//    private final static String DEFAULT_URL = "http://10.129.192.204";
+
+//    private final static String DEFAULT_URL = "http://10.129.192.204/html/alert.html";
 //    private final static String DEFAULT_URL = "https://wxpay.wxutil.com/mch/pay/h5.v2.php";
     private final static String DEFAULT_URL = "http://39.106.90.54/#/";
     // user: 15010929796 ps: 122716
@@ -127,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
         mWebView.getSettings().setAppCachePath(
                 mWebView.getContext().getCacheDir().getAbsolutePath());
 
+        mWebView.addJavascriptInterface(new JSInterface(getApplication()), "JSInterface");
         mWebView.setWebViewClient(new WebViewClient() {
 
             @Override
