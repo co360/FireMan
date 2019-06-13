@@ -45,7 +45,8 @@ public class MainActivity extends AppCompatActivity {
 
 //    private final static String DEFAULT_URL = "http://10.129.192.204/html/alert.html";
 //    private final static String DEFAULT_URL = "https://wxpay.wxutil.com/mch/pay/h5.v2.php";
-    private final static String DEFAULT_URL = "http://39.106.90.54/#/";
+//    private final static String DEFAULT_URL = "http://39.106.90.54/#/";
+    private final static String DEFAULT_URL = "http://www.dtxfdj.com/";
     // user: 15010929796 ps: 122716
 
     String[] mCantGoBackUrls = {
@@ -246,7 +247,8 @@ public class MainActivity extends AppCompatActivity {
     private void loadUrl(String url) {
         Map extraHeaders = new HashMap();
         if (url.startsWith("https://wx.tenpay.com")) {
-            extraHeaders.put("Referer", "https://wxpay.wxutil.com");
+//            extraHeaders.put("Referer", "https://wxpay.wxutil.com");
+            extraHeaders.put("Referer", DEFAULT_URL);
         }
         mWebView.loadUrl(url, extraHeaders);
     }
