@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
 //    private final static String DEFAULT_URL = "https://wxpay.wxutil.com/mch/pay/h5.v2.php";
 //    private final static String DEFAULT_URL = "http://39.106.90.54/#/";
     private final static String DEFAULT_URL = "http://www.dtxfdj.com/";
+//    private final static String DEFAULT_URL = "https://www.nio.cn/";
     // user: 15010929796 ps: 122716
 
     String[] mCantGoBackUrls = {

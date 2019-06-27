@@ -88,6 +88,12 @@ public class CommonUtils {
                 return false;
             }
         }
+
+        if(url.startsWith("tel:")) {
+            Intent sendIntent = new Intent(Intent.ACTION_DIAL, Uri.parse(url));
+            activity.startActivity(sendIntent);
+            return true; // 否则键盘回去，页面显示"找不到网页"
+        }
         return false;
     }
 
