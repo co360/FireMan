@@ -15,12 +15,16 @@ public class JSInterface {
 
     @JavascriptInterface
     public void registerJPushAlias(int sequence, String webMessage) {
+        android.util.Log.d("dtxfdj", "registerJPushAlias: alias: "
+                + webMessage);
         JPushInterface.setAlias(mContext, sequence, webMessage);
 //        JPushInterface.getAlias(mContext, sequence);
     }
 
     @JavascriptInterface
     public void showToast(String webMessage) {
+        android.util.Log.d("dtxfdj", "showToast: webMessage: "
+                + webMessage);
         Toast.makeText(mContext, webMessage, Toast.LENGTH_SHORT).show();
     }
 }

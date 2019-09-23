@@ -39,6 +39,8 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.jpush.android.api.JPushInterface;
+
 public class MainActivity extends AppCompatActivity {
 
 //    private final static String DEFAULT_URL = "http://dh.123.sogou.com";
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private final static String DEFAULT_URL = "http://www.dtxfdj.com/";
 //    private final static String DEFAULT_URL = "https://www.nio.cn/";
     // user: 15010929796 ps: 122716
+    // 后台主页："http://admin.dtxfdj.com/", use: 15510704300, pswd: Jianche51
 
     String[] mCantGoBackUrls = {
             "partyWork/searchDues",
@@ -97,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
         isForeground = false;
         super.onPause();
         mWebView.onPause();
+        JPushInterface.onPause(MainActivity.this);
     }
 
     @Override
@@ -104,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
         isForeground = true;
         super.onResume();
         mWebView.onResume();
+        JPushInterface.onResume(MainActivity.this);
     }
 
     @Override

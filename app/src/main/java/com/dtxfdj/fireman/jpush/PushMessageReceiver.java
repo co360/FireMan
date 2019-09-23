@@ -11,7 +11,7 @@ import cn.jpush.android.api.NotificationMessage;
 import cn.jpush.android.service.JPushMessageReceiver;
 
 public class PushMessageReceiver extends JPushMessageReceiver{
-    private static final String TAG = "PushMessageReceiver";
+    private static final String TAG = "dtxfdj-PushMessageReceiver";
     @Override
     public void onMessage(Context context, CustomMessage customMessage) {
         Log.d(TAG,"[onMessage] " + customMessage);
@@ -69,7 +69,7 @@ public class PushMessageReceiver extends JPushMessageReceiver{
     }
     @Override
     public void onAliasOperatorResult(Context context, JPushMessage jPushMessage) {
-        Log.d(TAG,"[onAliasOperatorResult] bdg7-alias: " + jPushMessage.getAlias());
+        Log.d(TAG,"[onAliasOperatorResult] alias: " + jPushMessage.getAlias());
         super.onAliasOperatorResult(context, jPushMessage);
     }
 
